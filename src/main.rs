@@ -5,6 +5,7 @@ mod problems {
     pub mod day4;
     pub mod day5;
     pub mod day6;
+    pub mod day7;
 }
 
 fn main() {
@@ -23,6 +24,8 @@ fn main() {
             "5b" => day5::problem_b(),
             "6a" => day6::problem_a(),
             "6b" => day6::problem_b(),
+            "7a" => day7::problem_a(),
+            "7b" => day7::problem_b(),
             _ => 0,
         };
         println!("{arg}: {result}");
