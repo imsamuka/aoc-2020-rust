@@ -1,6 +1,6 @@
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
 struct ColoredBag {
@@ -26,21 +26,16 @@ impl ColoredBag {
         Some(Self { color, bags_inside })
     }
 
-    pub fn bag_amount(&self, bags: &[Self]) -> usize {
+    pub fn bag_amount(&self, bags: &HashMap<String, Self>) -> usize {
         self.bags_inside
             .iter()
-            .map(|(color, amount)| amount * ColoredBag::find_bag(&color, &bags).bag_amount(&bags))
+            .map(|(color, amount)| amount * bags[color].bag_amount(&bags))
             .sum::<usize>()
             + 1
     }
 
-    pub fn find_bag<'a>(target: &str, bags: &'a [Self]) -> &'a ColoredBag {
-        bags.iter().find(|b| b.color == target).unwrap()
-        // ! really insecure, but fine for the challenge
-    }
-
-    pub fn bags_that_contain<'a>(target: &str, bags: &'a [Self]) -> Vec<&'a str> {
-        bags.iter()
+    pub fn bags_that_contain<'a>(target: &str, bags: &'a HashMap<String, Self>) -> Vec<&'a str> {
+        bags.values()
             .filter(|b| b.bags_inside.iter().find(|(c, _)| c == target).is_some())
             .map(|b| b.color.as_str())
             .collect()
@@ -50,7 +45,11 @@ impl ColoredBag {
 pub fn problem_a() -> usize {
     let file = std::fs::read_to_string("res/day7.txt").unwrap();
 
-    let bags: Vec<_> = file.lines().filter_map(ColoredBag::new).collect();
+    let bags: HashMap<String, ColoredBag> = file
+        .lines()
+        .filter_map(ColoredBag::new)
+        .map(|b| (b.color.clone(), b))
+        .collect();
 
     let mut layer = ColoredBag::bags_that_contain("shiny gold", &bags);
     let mut all_possible: HashSet<&str> = layer.iter().cloned().collect();
@@ -60,7 +59,7 @@ pub fn problem_a() -> usize {
             .iter()
             .flat_map(|c| ColoredBag::bags_that_contain(c, &bags))
             .collect();
-        all_possible.extend(layer.iter());
+        all_possible.extend(&layer);
     }
 
     all_possible.len()
@@ -68,6 +67,12 @@ pub fn problem_a() -> usize {
 
 pub fn problem_b() -> usize {
     let file = std::fs::read_to_string("res/day7.txt").unwrap();
-    let bags: Vec<_> = file.lines().filter_map(ColoredBag::new).collect();
-    ColoredBag::find_bag("shiny gold", &bags).bag_amount(&bags) - 1
+
+    let bags: HashMap<String, ColoredBag> = file
+        .lines()
+        .filter_map(ColoredBag::new)
+        .map(|b| (b.color.clone(), b))
+        .collect();
+
+    bags["shiny gold"].bag_amount(&bags) - 1
 }
