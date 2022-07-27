@@ -3,6 +3,7 @@ mod problems {
     pub mod day2;
     pub mod day3;
     pub mod day4;
+    pub mod day5;
 }
 
 fn main() {
@@ -17,10 +18,10 @@ fn main() {
             "3b" => day3::problem_b().to_string(),
             "4a" => day4::problem_a().to_string(),
             "4b" => day4::problem_b().to_string(),
+            "5a" => day5::problem_a().to_string(),
+            "5b" => day5::problem_b().to_string(),
             _ => "unknown problem.".into(),
         };
         println!("{arg}: {result}");
     }
 }
-
-// pub fn read_file(filename: &str) {}
