@@ -6,11 +6,12 @@ mod problems {
     pub mod day5;
     pub mod day6;
     pub mod day7;
+    pub mod day8;
 }
 
 fn main() {
     use problems::*;
-    for arg in std::env::args().skip(1) {
+    for arg in std::env::args().chain(Some(String::new())).skip(1) {
         let result = match arg.to_lowercase().trim_start_matches("day") {
             "1a" => day1::problem_a(),
             "1b" => day1::problem_b(),
@@ -26,7 +27,8 @@ fn main() {
             "6b" => day6::problem_b(),
             "7a" => day7::problem_a(),
             "7b" => day7::problem_b(),
-            _ => 0,
+            "8a" => day8::problem_a(),
+            "8b" | _ => day8::problem_b(),
         };
         println!("{arg}: {result}");
     }
